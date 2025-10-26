@@ -1,0 +1,41 @@
+[gd_scene load_steps=6 format=3 uid="uid://cj38ka7yb8y1f"]
+
+[ext_resource type="Texture2D" uid="uid://36efoaxoshut" path="res://assets/player.png" id="1_15dfr"]
+[ext_resource type="Script" uid="uid://b8ljckjbkl4os" path="res://scripts/player.gd" id="1_jlpcf"]
+[ext_resource type="Texture2D" uid="uid://dn20iumrdh85j" path="res://assets/gun.png" id="3_hfxgv"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_jlpcf"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath("GunContainer:rotation")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+properties/2/path = NodePath("GunContainer/GunSprite:flip_v")
+properties/2/spawn = true
+properties/2/replication_mode = 1
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_15dfr"]
+size = Vector2(7.9, 7.9)
+
+[node name="Player" type="CharacterBody2D"]
+collision_layer = 2
+script = ExtResource("1_jlpcf")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_jlpcf")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_15dfr")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_15dfr")
+
+[node name="GunContainer" type="Node2D" parent="."]
+
+[node name="GunSprite" type="Sprite2D" parent="GunContainer"]
+position = Vector2(9, 0)
+texture = ExtResource("3_hfxgv")
+
+[node name="Muzzle" type="Marker2D" parent="GunContainer/GunSprite"]
+position = Vector2(3, 0)
