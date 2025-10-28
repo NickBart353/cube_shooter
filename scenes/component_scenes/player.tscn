@@ -39,3 +39,14 @@ texture = ExtResource("3_hfxgv")
 
 [node name="Muzzle" type="Marker2D" parent="GunContainer/GunSprite"]
 position = Vector2(3, 0)
+
+[node name="ReloadTimer" type="Timer" parent="."]
+wait_time = 3.0
+one_shot = true
+
+[node name="FireRateTimer" type="Timer" parent="."]
+wait_time = 0.2
+one_shot = true
+
+[connection signal="timeout" from="ReloadTimer" to="." method="_on_timer_timeout"]
+[connection signal="timeout" from="FireRateTimer" to="." method="_on_fire_rate_timer_timeout"]

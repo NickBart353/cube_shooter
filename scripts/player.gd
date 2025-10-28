@@ -8,7 +8,9 @@ const JUMP_VELOCITY = -200.0
 const acceleration = 400
 const MAX_HEALTH = 100
 const BULLET = preload("res://scenes/component_scenes/bullet.tscn")
+const MAX_AMMO = 5
 
+var ammo
 var health = 100
 
 func _enter_tree() -> void:
@@ -17,6 +19,7 @@ func _enter_tree() -> void:
 func _ready() -> void:
 	if not is_multiplayer_authority():
 		$Sprite2D.modulate = Color.RED
+	ammo = MAX_AMMO
 
 func _physics_process(delta: float) -> void:
 	if not is_multiplayer_authority(): return
@@ -33,23 +36,36 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 	
-	if Input.is_action_just_pressed("shoot"):
-		shoot.rpc()
-	
+	if Input.is_action_pressed("shoot") and ammo > 0 and $FireRateTimer.is_stopped():
+		shoot.rpc(multiplayer.get_unique_id())
+		ammo -= 1
+		$FireRateTimer.start()
+
+	if ammo <= 0 and $ReloadTimer.is_stopped():
+		$ReloadTimer.start()
+		
 	$GunContainer.look_at(get_global_mouse_position())
 	$GunContainer/GunSprite.flip_v = get_global_mouse_position().x < global_position.x
 
 	move_and_slide()
 
 @rpc("call_local")
-func shoot():
+func shoot(shooter_pid):
 	var bullet = BULLET.instantiate()
+	bullet.set_multiplayer_authority(shooter_pid)
 	get_parent().add_child(bullet)
 	bullet.transform = $GunContainer/GunSprite/Muzzle.global_transform
 
+@rpc("any_peer")
 func take_damage(amount):
 	health -= amount
-	
 	if health <= 0:
 		health = MAX_HEALTH
 		global_position = game.get_random_spawnpoint().global_position
+
+
+func _on_timer_timeout() -> void:
+	ammo = MAX_AMMO
+
+func _on_fire_rate_timer_timeout() -> void:
+	pass

@@ -4,12 +4,18 @@ extends Node
 @onready var MAINMENU = $CanvasLayer/MainMenu
 
 const PLAYER: PackedScene = preload("res://scenes/component_scenes/player.tscn")
+const POWERUP: PackedScene = preload("res://scenes/component_scenes/power_up.tscn")
 
 var peer = ENetMultiplayerPeer.new()
 var player_list: Array[Player] = []
+var powerups: Dictionary = {}
 
 func _ready() -> void:
 	$PlayerSpawner.spawn_function = add_player
+	$PowerUpSpawner.spawn_function = spawn_power_ups
+
+func _process(_delta: float) -> void:
+	pass
 
 func _on_host_pressed() -> void:
 	peer.create_server(25565)
@@ -41,7 +47,7 @@ func get_random_spawnpoint():
 	var nearest_player_distance_dict: Dictionary = {}
 	var player_spawn_point
 	if player_list:
-		for spawn_point in $Level.get_children():
+		for spawn_point in $Level/PlayerSpawnPoints.get_children():
 			nearest_player_distance = INF
 			for player in player_list:
 				var new_distance = spawn_point.global_position.distance_to(player.global_position)
@@ -55,5 +61,22 @@ func get_random_spawnpoint():
 				player_spawn_point = spawnpoint
 				break
 	else:
-		player_spawn_point = $Level.get_children().pick_random()
+		player_spawn_point = $Level/PlayerSpawnPoints.get_children().pick_random()
 	return player_spawn_point
+
+func spawn_power_ups():
+	var spawns: Array = $Level/PowerUpSpawnPoints.get_children()
+	var spawn_index: int = randi_range(0, spawns.size()-1)
+
+	while powerups.get(spawn_index):
+		spawn_index = randi_range(0, spawns.size()-1)
+	powerups.set(spawn_index, spawns.get(spawn_index))
+	var powerup = POWERUP.instantiate()
+	powerup.global_position = spawns.get(spawn_index).global_position
+	add_child(powerup)
+
+func _on_power_up_timer_timeout() -> void:
+	if player_list.size() == 0: return
+	if powerups.size() >= 4: return
+	spawn_power_ups()
+	
