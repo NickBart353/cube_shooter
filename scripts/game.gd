@@ -11,6 +11,8 @@ var player_list: Array[Player] = []
 var powerups: Dictionary = {}
 
 func _ready() -> void:
+	if OS.has_feature("dedicated_server"):
+		_on_host_pressed()
 	$PlayerSpawner.spawn_function = add_player
 	$PowerUpSpawner.spawn_function = spawn_power_ups
 
@@ -26,11 +28,12 @@ func _on_host_pressed() -> void:
 			print("Peer: {0} has joined!".format([pid]))
 			$PlayerSpawner.spawn(pid)
 	)
-	$PlayerSpawner.spawn(multiplayer.get_unique_id())
+	if not OS.has_feature("dedicated_server"):
+		$PlayerSpawner.spawn(multiplayer.get_unique_id())
 	MAINMENU.hide()
 
 func _on_join_pressed() -> void:
-	peer.create_client("localhost", 25565)
+	peer.create_client("localhost", 25565)#217.154.144.91
 	multiplayer.multiplayer_peer = peer
 	MAINMENU.hide()
 
@@ -64,19 +67,30 @@ func get_random_spawnpoint():
 		player_spawn_point = $Level/PlayerSpawnPoints.get_children().pick_random()
 	return player_spawn_point
 
-func spawn_power_ups():
+func spawn_power_ups(data) -> Node:
+	var powerup = POWERUP.instantiate()
+	powerup.global_position = data["pos"]
+	powerup.set_powerup_type(data["type"])
+	return powerup
+
+func _on_power_up_timer_timeout() -> void:
+	if not multiplayer.get_unique_id() == 1: return
+	if player_list.size() == 0: return
+	if powerups.size() >= 4: return
+	
 	var spawns: Array = $Level/PowerUpSpawnPoints.get_children()
 	var spawn_index: int = randi_range(0, spawns.size()-1)
-
+	
 	while powerups.get(spawn_index):
 		spawn_index = randi_range(0, spawns.size()-1)
 	powerups.set(spawn_index, spawns.get(spawn_index))
-	var powerup = POWERUP.instantiate()
-	powerup.global_position = spawns.get(spawn_index).global_position
-	add_child(powerup)
-
-func _on_power_up_timer_timeout() -> void:
-	if player_list.size() == 0: return
-	if powerups.size() >= 4: return
-	spawn_power_ups()
+	
+	var powerup_type = randi_range(0, 3)
+	
+	var data_to_send = {
+		"pos": spawns.get(spawn_index).global_position,
+		"type": powerup_type
+	}
+	
+	$PowerUpSpawner.spawn(data_to_send)
 	

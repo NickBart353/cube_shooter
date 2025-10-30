@@ -48,5 +48,10 @@ one_shot = true
 wait_time = 0.2
 one_shot = true
 
+[node name="BuffTimer" type="Timer" parent="."]
+wait_time = 10.0
+one_shot = true
+
 [connection signal="timeout" from="ReloadTimer" to="." method="_on_timer_timeout"]
 [connection signal="timeout" from="FireRateTimer" to="." method="_on_fire_rate_timer_timeout"]
+[connection signal="timeout" from="BuffTimer" to="." method="_on_buff_timer_timeout"]

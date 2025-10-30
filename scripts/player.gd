@@ -12,6 +12,7 @@ const MAX_AMMO = 5
 
 var ammo
 var health = 100
+var current_powerup
 
 func _enter_tree() -> void:
 	set_multiplayer_authority(int(str(name)))
@@ -53,7 +54,7 @@ func _physics_process(delta: float) -> void:
 func shoot(shooter_pid):
 	var bullet = BULLET.instantiate()
 	bullet.set_multiplayer_authority(shooter_pid)
-	get_parent().add_child(bullet)
+	get_parent().add_child(bullet, true)
 	bullet.transform = $GunContainer/GunSprite/Muzzle.global_transform
 
 @rpc("any_peer")
@@ -63,9 +64,38 @@ func take_damage(amount):
 		health = MAX_HEALTH
 		global_position = game.get_random_spawnpoint().global_position
 
-
 func _on_timer_timeout() -> void:
 	ammo = MAX_AMMO
 
 func _on_fire_rate_timer_timeout() -> void:
 	pass
+
+func consume_powerup(powerup):
+	if not $BuffTimer.is_stopped(): return
+	current_powerup = powerup
+	$BuffTimer.start()
+	match current_powerup.power_up_type:
+		"invulnerability":
+			health = INF
+		"infinite_ammo":
+			ammo = INF
+		"insta_kill":
+			pass
+		"rapid_fire":
+			pass
+
+func _on_buff_timer_timeout() -> void:
+	if current_powerup: return 
+	reset_powerup()
+	
+func reset_powerup():
+	match current_powerup.power_up_type:
+		"invulnerability":
+			health = MAX_HEALTH
+		"infinite_ammo":
+			ammo = MAX_AMMO
+		"insta_kill":
+			pass
+		"rapid_fire":
+			pass
+	current_powerup = null
