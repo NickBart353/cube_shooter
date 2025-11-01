@@ -37,7 +37,8 @@ func _on_body_entered(body: Node2D) -> void:
 
 @rpc("call_local")
 func remove_power_up():
-	queue_free()
+	#queue_free()
+	self.visible = false
 
 func set_powerup_type(type):
 	type_int = type

@@ -1,9 +1,8 @@
-[gd_scene load_steps=11 format=3 uid="uid://cj38ka7yb8y1f"]
+[gd_scene load_steps=10 format=3 uid="uid://cj38ka7yb8y1f"]
 
 [ext_resource type="Texture2D" uid="uid://36efoaxoshut" path="res://assets/player.png" id="1_15dfr"]
 [ext_resource type="Script" uid="uid://b8ljckjbkl4os" path="res://scripts/player.gd" id="1_jlpcf"]
 [ext_resource type="Texture2D" uid="uid://dn20iumrdh85j" path="res://assets/gun.png" id="3_hfxgv"]
-[ext_resource type="Texture2D" uid="uid://ff5uqv80xm63" path="res://assets/progress-bar-circle.png" id="4_ct2jf"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_jlpcf"]
 properties/0/path = NodePath(".:position")
@@ -90,33 +89,19 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_ct2jf")
 value = 100.0
 show_percentage = false
 
-[node name="HUD" type="CanvasLayer" parent="."]
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="AmmoContainer" type="VBoxContainer" parent="HUD"]
-offset_left = 311.0
-offset_top = 237.0
-offset_right = 425.0
-offset_bottom = 458.0
-alignment = 1
-
-[node name="AmmoCounter" type="Label" parent="HUD/AmmoContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
+[node name="Label" type="Label" parent="CanvasLayer"]
+offset_left = 19.999985
+offset_top = 23.999992
+offset_right = 133.99998
+offset_bottom = 161.0
+scale = Vector2(0.1, 0.1)
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = SubResource("SystemFont_hfxgv")
 theme_override_font_sizes/font_size = 100
-horizontal_alignment = 1
+text = "15"
 uppercase = true
-
-[node name="ReloadProgressBar" type="TextureProgressBar" parent="HUD/AmmoContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
-max_value = 300.0
-fill_mode = 5
-texture_progress = ExtResource("4_ct2jf")
-tint_under = Color(0, 0, 0, 0.75686276)
-tint_over = Color(0, 0.32156864, 1, 1)
-tint_progress = Color(0.55394334, 0.7065888, 1, 1)
 
 [connection signal="timeout" from="ReloadTimer" to="." method="_on_timer_timeout"]
 [connection signal="timeout" from="FireRateTimer" to="." method="_on_fire_rate_timer_timeout"]
