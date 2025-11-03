@@ -151,7 +151,7 @@ text = "Host
 [node name="Join" type="Button" parent="CanvasLayer/MainMenu/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
-text = "Connect"
+text = "Join"
 
 [node name="PowerUpTimer" type="Timer" parent="."]
 wait_time = 10.0
