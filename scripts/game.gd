@@ -1,7 +1,9 @@
 class_name Game
 extends Node
 
-@onready var MAINMENU = $CanvasLayer/MainMenu
+@export var player_scene: PackedScene
+
+@onready var my_spawner = $PlayerSpawner
 
 const PLAYER: PackedScene = preload("res://scenes/component_scenes/player.tscn")
 const POWERUP: PackedScene = preload("res://scenes/component_scenes/power_up.tscn")
@@ -11,6 +13,12 @@ var player_list: Array[Player] = []
 var powerups: Dictionary = {}
 
 func _ready() -> void:
+	if NetworkHandler.is_hosting_game:
+		var spawn_manager_scene = load("res://scenes/multiplayer/spawn_manager.tscn")
+		var spawn_manager = spawn_manager_scene.instantiate()
+		spawn_manager.player_scene = player_scene
+		add_child(spawn_manager)
+	
 	if OS.has_feature("dedicated_server"):
 		_on_host_pressed()
 	$PlayerSpawner.spawn_function = add_player
@@ -30,12 +38,10 @@ func _on_host_pressed() -> void:
 	)
 	if not OS.has_feature("dedicated_server"):
 		$PlayerSpawner.spawn(multiplayer.get_unique_id())
-	MAINMENU.hide()
 
 func _on_join_pressed() -> void:
 	peer.create_client("localhost", 25565)#217.154.144.91
 	multiplayer.multiplayer_peer = peer
-	MAINMENU.hide()
 
 func add_player(pid):
 	var player_instance = PLAYER.instantiate()

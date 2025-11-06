@@ -11,9 +11,13 @@ config_version=5
 [application]
 
 config/name="cube_shooter"
-run/main_scene="uid://djfbqjmlhgsdr"
+run/main_scene="uid://08j3dcgctx1r"
 config/features=PackedStringArray("4.5", "GL Compatibility")
 config/icon="res://icon.svg"
+
+[autoload]
+
+NetworkHandler="*res://scripts/multiplayer/network_handler.gd"
 
 [display]
 

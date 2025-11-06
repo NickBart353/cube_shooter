@@ -28,6 +28,7 @@ bg_color = Color(1, 0.3372549, 0.21960784, 1)
 bg_color = Color(0.3019608, 1, 0, 1)
 
 [sub_resource type="SystemFont" id="SystemFont_hfxgv"]
+subpixel_positioning = 0
 
 [node name="Player" type="CharacterBody2D"]
 collision_layer = 4
@@ -118,6 +119,15 @@ tint_under = Color(0, 0, 0, 0.75686276)
 tint_over = Color(0, 0.32156864, 1, 1)
 tint_progress = Color(0.55394334, 0.7065888, 1, 1)
 
+[node name="MainMenu" type="Button" parent="HUD"]
+offset_left = 853.0
+offset_top = 113.0
+offset_right = 1111.0
+offset_bottom = 185.0
+theme_override_font_sizes/font_size = 46
+text = "Main Menu"
+
 [connection signal="timeout" from="ReloadTimer" to="." method="_on_timer_timeout"]
 [connection signal="timeout" from="FireRateTimer" to="." method="_on_fire_rate_timer_timeout"]
 [connection signal="timeout" from="BuffTimer" to="." method="_on_buff_timer_timeout"]
+[connection signal="pressed" from="HUD/MainMenu" to="." method="_on_main_menu_pressed"]

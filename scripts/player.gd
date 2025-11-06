@@ -5,7 +5,7 @@ extends CharacterBody2D
 @export var acceleration = 200.0 
 @export var friction = 100.0
 
-@onready var game: Game = get_parent()
+@onready var game: Game = get_parent().get_parent()
 
 const SPEED = 50.0
 const JUMP_VELOCITY = -200.0
@@ -25,9 +25,11 @@ func _ready() -> void:
 	if not is_multiplayer_authority():
 		$Sprite2D.modulate = Color.RED
 		$Camera2D.enabled = false
+		
 	ammo = MAX_AMMO
 
 func _physics_process(delta: float) -> void:
+	if not get_multiplayer_authority(): return
 	if not is_multiplayer_authority(): return
 	
 	direction = Input.get_vector("move_left", "move_right", "move_up", "move_down").normalized()
@@ -40,7 +42,7 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity = velocity.move_toward(Vector2.ZERO, friction * delta)
 	
-	if Input.is_action_pressed("shoot") and ammo > 0 and $FireRateTimer.is_stopped():
+	if Input.is_action_pressed("shoot") and ammo > 0 and $FireRateTimer.is_stopped() and $ReloadTimer.is_stopped():
 		shoot.rpc(multiplayer.get_unique_id())
 		ammo -= 1
 		$FireRateTimer.start()
@@ -61,7 +63,7 @@ func shoot(shooter_pid):
 	var bullet = BULLET.instantiate()
 	bullet.set_multiplayer_authority(shooter_pid)
 	bullet.transform = $GunContainer/GunSprite/Muzzle.global_transform
-	get_parent().add_child(bullet, true)
+	game.add_child(bullet, true)
 
 @rpc("any_peer")
 func take_damage(amount):
@@ -130,3 +132,6 @@ func reset_timers():
 	$ReloadTimer.stop()
 	$FireRateTimer.stop()
 	$BuffTimer.stop()
+
+func _on_main_menu_pressed() -> void:
+	NetworkHandler.terminate_connection_and_load_main_menu()

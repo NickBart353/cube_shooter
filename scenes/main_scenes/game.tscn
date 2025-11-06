@@ -1,7 +1,8 @@
-[gd_scene load_steps=7 format=4 uid="uid://djfbqjmlhgsdr"]
+[gd_scene load_steps=8 format=4 uid="uid://djfbqjmlhgsdr"]
 
 [ext_resource type="Texture2D" uid="uid://difyigtbly6i0" path="res://assets/tileset.png" id="1_fdak3"]
 [ext_resource type="Script" uid="uid://b1n3qgfo1y5rk" path="res://scripts/game.gd" id="1_ifh15"]
+[ext_resource type="PackedScene" uid="uid://cj38ka7yb8y1f" path="res://scenes/component_scenes/player.tscn" id="2_ifh15"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ifh15"]
 texture = ExtResource("1_fdak3")
@@ -42,10 +43,11 @@ sources/0 = SubResource("TileSetAtlasSource_fqmia")
 
 [node name="Game" type="Node"]
 script = ExtResource("1_ifh15")
+player_scene = ExtResource("2_ifh15")
 
 [node name="PlayerSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("uid://cj38ka7yb8y1f")
-spawn_path = NodePath("..")
+spawn_path = NodePath("../PlayerSpawn")
 
 [node name="PowerUpSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("uid://eebn50b4xptn")
@@ -113,50 +115,11 @@ position = Vector2(157, 87)
 [node name="Spawn8" type="Marker2D" parent="Level/PowerUpSpawnPoints"]
 position = Vector2(-164, -89)
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-
-[node name="MainMenu" type="Control" parent="CanvasLayer"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/MainMenu"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -52.5
-offset_top = -46.5
-offset_right = 52.5
-offset_bottom = 46.5
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Title" type="Label" parent="CanvasLayer/MainMenu/VBoxContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "Cube Shooter"
-
-[node name="Host" type="Button" parent="CanvasLayer/MainMenu/VBoxContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "Host
-"
-
-[node name="Join" type="Button" parent="CanvasLayer/MainMenu/VBoxContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "Join"
-
 [node name="PowerUpTimer" type="Timer" parent="."]
 wait_time = 10.0
 autostart = true
 
-[connection signal="pressed" from="CanvasLayer/MainMenu/VBoxContainer/Host" to="." method="_on_host_pressed"]
-[connection signal="pressed" from="CanvasLayer/MainMenu/VBoxContainer/Join" to="." method="_on_join_pressed"]
+[node name="PlayerSpawn" type="Node2D" parent="."]
+unique_name_in_owner = true
+
 [connection signal="timeout" from="PowerUpTimer" to="." method="_on_power_up_timer_timeout"]

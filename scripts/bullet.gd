@@ -9,8 +9,7 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	position += transform.x * speed * delta
 	if global_position.distance_to(start_position) > 2000:
-		if not is_multiplayer_authority(): return
-		remove_bullet.rpc()
+		remove_bullet.rpc_id(1)
 
 func _on_body_entered(body: Node2D) -> void:
 	if not is_multiplayer_authority(): return
