@@ -2,6 +2,7 @@ class_name SpawnManager
 extends Node
 
 var player_scene: PackedScene
+var name_to_add: String = ""
 
 @onready var spawn_path: Node2D = get_tree().current_scene.get_node("%PlayerSpawn") 
 
@@ -25,7 +26,7 @@ func _add_player_to_game(pid: int):
 	var player_to_add = player_scene.instantiate()
 	player_to_add.name = str(pid)
 	player_to_add.global_position = get_parent().get_random_spawnpoint().global_position
-	
+	player_to_add.user_name = name_to_add
 	player_to_add.set_multiplayer_authority(pid)
 	
 	spawn_path.add_child(player_to_add, true)

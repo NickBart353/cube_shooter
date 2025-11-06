@@ -17,6 +17,7 @@ var ammo
 var health = 100
 var current_powerup
 var direction = Vector2.ZERO
+var user_name: String
 
 func _enter_tree() -> void:
 	set_multiplayer_authority(int(str(name)))
@@ -25,7 +26,7 @@ func _ready() -> void:
 	if not is_multiplayer_authority():
 		$Sprite2D.modulate = Color.RED
 		$Camera2D.enabled = false
-		
+		$HUD/Name.text = user_name
 	ammo = MAX_AMMO
 
 func _physics_process(delta: float) -> void:
