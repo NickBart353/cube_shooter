@@ -19,10 +19,10 @@ func _ready() -> void:
 		spawn_manager.player_scene = player_scene
 		add_child(spawn_manager)
 	
-	if OS.has_feature("dedicated_server"):
-		_on_host_pressed()
-	$PlayerSpawner.spawn_function = add_player
-	$PowerUpSpawner.spawn_function = spawn_power_ups
+	#if OS.has_feature("dedicated_server"):
+	#	_on_host_pressed()
+	#$PlayerSpawner.spawn_function = add_player
+	#$PowerUpSpawner.spawn_function = spawn_power_ups
 
 func _process(_delta: float) -> void:
 	pass

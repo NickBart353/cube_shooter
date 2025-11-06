@@ -10,7 +10,8 @@ func _ready() -> void:
 	multiplayer.peer_connected.connect(_peer_connected)
 	multiplayer.peer_disconnected.connect(_peer_disconnected)
 	
-	_add_player_to_game(1)
+	if not OS.has_feature("dedicated_server"):
+		_add_player_to_game(1)
 	
 func _peer_connected(pid):
 	print("Peer: {0} has joined!".format([pid]))
@@ -26,7 +27,6 @@ func _add_player_to_game(pid: int):
 	var player_to_add = player_scene.instantiate()
 	player_to_add.name = str(pid)
 	player_to_add.global_position = get_parent().get_random_spawnpoint().global_position
-	player_to_add.user_name = name_to_add
 	player_to_add.set_multiplayer_authority(pid)
 	
 	spawn_path.add_child(player_to_add, true)

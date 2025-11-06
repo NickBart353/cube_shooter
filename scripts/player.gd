@@ -26,7 +26,8 @@ func _ready() -> void:
 	if not is_multiplayer_authority():
 		$Sprite2D.modulate = Color.RED
 		$Camera2D.enabled = false
-		$HUD/Name.text = user_name
+	else:
+		$NamePosition/Name.text = Cache.player_name
 	ammo = MAX_AMMO
 
 func _physics_process(delta: float) -> void:
