@@ -4,7 +4,7 @@ const GAME_SCENE = "res://scenes/main_scenes/game.tscn"
 const MENU_SCENE = "res://scenes/main_scenes/main_menu.tscn"
 const PLAYER: PackedScene = preload("res://scenes/component_scenes/player.tscn")
 const POWERUP: PackedScene = preload("res://scenes/component_scenes/power_up.tscn")
-const IP_ADDRESS: String = "localhost"#217.154.144.91
+const IP_ADDRESS: String = "localhost" # "217.154.144.91"
 const PORT: int = 42069
 
 var peer: ENetMultiplayerPeer

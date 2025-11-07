@@ -27,8 +27,9 @@ func _ready() -> void:
 		$Sprite2D.modulate = Color.RED
 		$Camera2D.enabled = false
 	else:
-		$NamePosition/Name.text = Cache.player_name
-	ammo = MAX_AMMO
+		$NamePosition/CenterContainer/Name.text = Cache.player_name
+		global_position = game.get_random_spawnpoint().global_position
+		ammo = MAX_AMMO
 
 func _physics_process(delta: float) -> void:
 	if not get_multiplayer_authority(): return

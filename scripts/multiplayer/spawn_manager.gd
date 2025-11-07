@@ -26,7 +26,7 @@ func _peer_disconnected(pid):
 func _add_player_to_game(pid: int):
 	var player_to_add = player_scene.instantiate()
 	player_to_add.name = str(pid)
-	player_to_add.global_position = get_parent().get_random_spawnpoint().global_position
 	player_to_add.set_multiplayer_authority(pid)
 	
 	spawn_path.add_child(player_to_add, true)
+	#player_to_add.global_position = get_parent().get_random_spawnpoint().global_position
