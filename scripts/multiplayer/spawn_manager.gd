@@ -29,4 +29,3 @@ func _add_player_to_game(pid: int):
 	player_to_add.set_multiplayer_authority(pid)
 	
 	spawn_path.add_child(player_to_add, true)
-	#player_to_add.global_position = get_parent().get_random_spawnpoint().global_position

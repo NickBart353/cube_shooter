@@ -18,6 +18,10 @@ var health = 100
 var current_powerup
 var direction = Vector2.ZERO
 var user_name: String
+var kills = 0
+var deaths = 0
+var scoreboard_player_dict: Dictionary
+
 
 func _enter_tree() -> void:
 	set_multiplayer_authority(int(str(name)))
@@ -27,9 +31,11 @@ func _ready() -> void:
 		$Sprite2D.modulate = Color.RED
 		$Camera2D.enabled = false
 	else:
-		$NamePosition/CenterContainer/Name.text = Cache.player_name
+		user_name = Cache.player_name
+		$NamePosition/CenterContainer/Name.text = user_name
 		global_position = game.get_random_spawnpoint().global_position
 		ammo = MAX_AMMO
+		_add_player_to_scoreboard()
 
 func _physics_process(delta: float) -> void:
 	if not get_multiplayer_authority(): return
@@ -58,7 +64,9 @@ func _physics_process(delta: float) -> void:
 	
 	$GunContainer.look_at(get_global_mouse_position())
 	$GunContainer/GunSprite.flip_v = get_global_mouse_position().x < global_position.x
-
+	
+	_activate_scoreboard()
+	
 	move_and_slide()
 
 @rpc("call_local")
@@ -66,10 +74,11 @@ func shoot(shooter_pid):
 	var bullet = BULLET.instantiate()
 	bullet.set_multiplayer_authority(shooter_pid)
 	bullet.transform = $GunContainer/GunSprite/Muzzle.global_transform
+	bullet.shooter_pid = self.name
 	game.add_child(bullet, true)
 
 @rpc("any_peer")
-func take_damage(amount):
+func take_damage(amount, shooter_pid):
 	health -= amount
 	if health <= 0:
 		_reset_player()
@@ -138,3 +147,31 @@ func reset_timers():
 
 func _on_main_menu_pressed() -> void:
 	NetworkHandler.terminate_connection_and_load_main_menu()
+
+func _activate_scoreboard():
+	$HUD/Scoreboard.visible = Input.is_action_pressed("statsheet")
+
+func _add_player_to_scoreboard():# TO BE CONTINUED
+	var player_list: Array[Node] = game.get_node("%PlayerSpawn").get_children()
+	
+	for player in player_list:
+		scoreboard_player_dict.set(player.name, 
+		{"username": player.user_name,
+		"kills": player.kills,
+		"deaths": player.deaths})
+		
+		var name_label = Label.new()
+		name_label.text = str(player.user_name)
+		name_label.add_theme_font_size_override("font_size", 50)
+		
+		var kill_label = Label.new()
+		kill_label.text = str(player.kills)
+		kill_label.add_theme_font_size_override("font_size", 50)
+		
+		var death_label = Label.new()
+		death_label.text = str(player.deaths)
+		death_label.add_theme_font_size_override("font_size", 50)
+		
+		$HUD/Scoreboard/Columns/NameContainer.add_child(name_label)
+		$HUD/Scoreboard/Columns/KillContainer.add_child(kill_label)
+		$HUD/Scoreboard/Columns/DeathContainer.add_child(death_label)
