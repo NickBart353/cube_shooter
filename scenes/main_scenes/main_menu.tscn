@@ -1,0 +1,77 @@
+[gd_scene load_steps=2 format=3 uid="uid://08j3dcgctx1r"]
+
+[ext_resource type="Script" uid="uid://dx83gbot888jf" path="res://scripts/main_menu.gd" id="1_xfcpj"]
+
+[node name="MainMenu" type="Node"]
+script = ExtResource("1_xfcpj")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Control"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 662.0
+offset_top = 217.0
+offset_right = 1316.0
+offset_bottom = 801.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Title" type="Label" parent="CanvasLayer/Control/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 100
+text = "Cube Shooter"
+
+[node name="Host" type="Button" parent="CanvasLayer/Control/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 100
+text = "Host
+"
+
+[node name="Join" type="Button" parent="CanvasLayer/Control/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 100
+text = "Join"
+
+[node name="Exit" type="Button" parent="CanvasLayer/Control/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 100
+text = "Exit Game"
+
+[node name="NameContainer" type="VBoxContainer" parent="CanvasLayer/Control"]
+visible = false
+layout_mode = 0
+offset_left = 625.0
+offset_top = 334.0
+offset_right = 1387.0
+offset_bottom = 715.0
+
+[node name="Name eingeben" type="Label" parent="CanvasLayer/Control/NameContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 100
+text = "Name eingeben"
+
+[node name="LineEdit" type="LineEdit" parent="CanvasLayer/Control/NameContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 80
+placeholder_text = "Paul Berg"
+
+[node name="AcceptName" type="Button" parent="CanvasLayer/Control/NameContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 80
+text = "Accept Name"
+
+[connection signal="pressed" from="CanvasLayer/Control/VBoxContainer/Host" to="." method="_on_host_pressed"]
+[connection signal="pressed" from="CanvasLayer/Control/VBoxContainer/Join" to="." method="_on_join_pressed"]
+[connection signal="pressed" from="CanvasLayer/Control/VBoxContainer/Exit" to="." method="_on_exit_pressed"]
+[connection signal="pressed" from="CanvasLayer/Control/NameContainer/AcceptName" to="." method="_on_accept_name_pressed"]

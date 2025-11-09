@@ -1,7 +1,10 @@
 class_name Game
 extends Node
 
-@onready var MAINMENU = $CanvasLayer/MainMenu
+@export var player_scene: PackedScene
+
+@onready var my_spawner = $PlayerSpawner
+@onready var player_spawns = $PlayerSpawn
 
 const PLAYER: PackedScene = preload("res://scenes/component_scenes/player.tscn")
 const POWERUP: PackedScene = preload("res://scenes/component_scenes/power_up.tscn")
@@ -11,48 +14,24 @@ var player_list: Array[Player] = []
 var powerups: Dictionary = {}
 
 func _ready() -> void:
-	if OS.has_feature("dedicated_server"):
-		_on_host_pressed()
-	$PlayerSpawner.spawn_function = add_player
-	$PowerUpSpawner.spawn_function = spawn_power_ups
-
-func _process(_delta: float) -> void:
-	pass
-
-func _on_host_pressed() -> void:
-	peer.create_server(25565)
-	multiplayer.multiplayer_peer = peer
-	
-	multiplayer.peer_connected.connect(
-		func(pid):
-			print("Peer: {0} has joined!".format([pid]))
-			$PlayerSpawner.spawn(pid)
-	)
-	if not OS.has_feature("dedicated_server"):
-		$PlayerSpawner.spawn(multiplayer.get_unique_id())
-	MAINMENU.hide()
-
-func _on_join_pressed() -> void:
-	peer.create_client("localhost", 25565)#217.154.144.91
-	multiplayer.multiplayer_peer = peer
-	MAINMENU.hide()
-
-func add_player(pid):
-	var player_instance = PLAYER.instantiate()
-	player_instance.name = "{0}".format([pid])
-	player_instance.global_position = get_random_spawnpoint().global_position
-	player_list.append(player_instance)
-	return player_instance
+	if NetworkHandler.is_hosting_game:
+		var spawn_manager_scene = load("res://scenes/multiplayer/spawn_manager.tscn")
+		var spawn_manager = spawn_manager_scene.instantiate()
+		spawn_manager.player_scene = player_scene
+		add_child(spawn_manager)
 
 func get_random_spawnpoint():
+	
+	var current_player_list: Array = player_spawns.get_children()
+	
 	var max_distance
 	var nearest_player_distance
 	var nearest_player_distance_dict: Dictionary = {}
 	var player_spawn_point
-	if player_list:
+	if current_player_list.size() >= 1:
 		for spawn_point in $Level/PlayerSpawnPoints.get_children():
 			nearest_player_distance = INF
-			for player in player_list:
+			for player in current_player_list:
 				var new_distance = spawn_point.global_position.distance_to(player.global_position)
 				if new_distance < nearest_player_distance:
 					nearest_player_distance = new_distance
@@ -91,6 +70,4 @@ func _on_power_up_timer_timeout() -> void:
 		"pos": spawns.get(spawn_index).global_position,
 		"type": powerup_type
 	}
-	
 	$PowerUpSpawner.spawn(data_to_send)
-	
